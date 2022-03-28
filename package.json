@@ -1,0 +1,9 @@
+{
+  "main": "mail-dl.js",
+  "dependencies": {
+    "@azure/identity": "^2.0.4",
+    "@microsoft/microsoft-graph-client": "^3.0.2",
+    "fs-extra": "^10.0.1",
+    "isomorphic-fetch": "^3.0.0"
+  }
+}
