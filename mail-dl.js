@@ -165,7 +165,7 @@ function formatEmailAddress({emailAddress})
 
 function matchMessage(message)
 {
-  return matchers.some(match => matchMessage(message));
+  return matchers.some(match => match(message));
 }
 
 function now()
