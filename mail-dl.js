@@ -3,15 +3,16 @@ require('isomorphic-fetch');
 const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
-const {Client} = require("@microsoft/microsoft-graph-client");
-const {TokenCredentialAuthenticationProvider} = require("@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials");
-const {ClientSecretCredential} = require("@azure/identity");
+const {Client} = require('@microsoft/microsoft-graph-client');
+const {TokenCredentialAuthenticationProvider} = require('@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials');
+const {ClientSecretCredential} = require('@azure/identity');
 
-const targetDir    = process.env.WMES_MAIL_DL_TARGET_DIR;
-const userId       = process.env.WMES_MAIL_DL_USER_ID;
-const tenantId     = process.env.WMES_MAIL_DL_TENANT_ID;
-const clientId     = process.env.WMES_MAIL_DL_CLIENT_ID;
-const clientSecret = process.env.WMES_MAIL_DL_CLIENT_SECRET;
+const targetDir    = process.env.MSGRAPH_MAIL_DL_TARGET_DIR;
+const userId       = process.env.MSGRAPH_MAIL_DL_USER_ID;
+const tenantId     = process.env.MSGRAPH_MAIL_DL_TENANT_ID;
+const clientId     = process.env.MSGRAPH_MAIL_DL_CLIENT_ID;
+const clientSecret = process.env.MSGRAPH_MAIL_DL_CLIENT_SECRET;
+const matchers     = Object.values(require(process.env.MSGRAPH_MAIL_DL_MATCHERS || `${__dirname}/matchers.js`));
 
 const credential = new ClientSecretCredential(tenantId, clientId, clientSecret, {
 
@@ -164,17 +165,7 @@ function formatEmailAddress({emailAddress})
 
 function matchMessage(message)
 {
-  if (/ETO.*?([0-9]{12}|[0-9A-Z]{7})/i.test(message.subject))
-  {
-    return true;
-  }
-
-  if (/(zpw|near\s*miss|kaizen|uspraw).*?[0-9]+/i.test(message.subject))
-  {
-    return message.attachments.some(a => a.contentType.startsWith('image/'));
-  }
-
-  return false;
+  return matchers.some(match => matchMessage(message));
 }
 
 function now()
